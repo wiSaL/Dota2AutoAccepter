@@ -243,5 +243,4 @@ public class DAAPropSettings implements DAASettings{
 	public boolean getInTrayOnStart() {
 		return inTrayOnStart;
 	}
-	
 }
