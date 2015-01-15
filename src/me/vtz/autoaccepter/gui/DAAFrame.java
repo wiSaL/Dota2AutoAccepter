@@ -47,7 +47,7 @@ public class DAAFrame extends JFrame implements DAAGui {
 	 */
 	private static final long serialVersionUID = 2057196683737605548L;
 	
-	public static final String VERSION = "v0.1 Alpha";
+	public static final String VERSION = "v0.2 Alpha";
 	public static final String APP_NAME = "Dota 2 AutoAccepter";
 	
 	TrayIcon trayIcon;

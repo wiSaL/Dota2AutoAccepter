@@ -1,8 +1,9 @@
-<project name="Dota2AutoAccepter" default="all">
+<project name="Dota2AutoAccepter" default="default">
 
 	<property name="launch4j.dir" location="launch4j"/>
+	<property name="build.dir" location="build"/>
 
-	<target name="init">
+	<target name="check">
 		<condition property="isl4jex">
 			<resourceexists>
   				<file file="${launch4j.dir}/launch4j.jar"/>
@@ -10,8 +11,7 @@
 		</condition>
 	</target>
 
-	<target name="download.launch4j" description="dwnloading"
-		 depends="init" unless="isl4jex">
+	<target name="download.launch4j" depends="check" unless="isl4jex">
 		<get src="http://kent.dl.sourceforge.net/project/launch4j/launch4j-3/3.6/launch4j-3.6-win32.zip"
 			 dest="launch4j.zip"/>
 		<unzip src="launch4j.zip" dest=""/>
@@ -21,16 +21,15 @@
 			 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
 	</target>
 
-	<target name="def.launch4j" description="def"
-		 depends="init" if="isl4jex">
+	<target name="def.launch4j" depends="check" if="isl4jex">
 		<taskdef name="launch4j" 
 			 classname="net.sf.launch4j.ant.Launch4jTask" 
 			 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
 	</target>
 
-	<target name="make.dirs" description="Make build directory">
-		<mkdir dir="build"/>
-		<mkdir dir="build/class"/>
+	<target name="make.dirs">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.dir}/class"/>
 	</target>
 
 	<path id="classpath" >
@@ -39,15 +38,15 @@
 		</fileset>
 	</path>
 
-	<target name="compile" description="Compiling" depends="make.dirs">
-		<javac destdir="build/class" classpathref="classpath" includeantruntime="false">
+	<target name="compile" depends="make.dirs">
+		<javac destdir="${build.dir}/class" classpathref="classpath" includeantruntime="false">
 			<src path="src"/>
 		</javac>
 	</target>
 
-	<target name="make.jar" description="make jar" depends="compile">
-		<jar destfile="build/Dota2AutoAccepter.jar">
-			<fileset dir="build/class">
+	<target name="make.jar" depends="compile">
+		<jar destfile="${build.dir}/Dota2AutoAccepter.jar">
+			<fileset dir="${build.dir}/class">
 					<include name="**/*.class"/>
 					<exclude name="**/CVS"/>
 			</fileset>
@@ -60,21 +59,20 @@
       			<attribute name="Main-Class" value="me.vtz.autoaccepter.DotaAutoAccepter"/>
     	</manifest>
 		</jar>
-		<delete dir="build/class"/>
+		<delete dir="${build.dir}/class"/>
 	</target>
 
-	<target name="make.exe" description="make exe"
-		 depends="make.jar,download.launch4j,def.launch4j">
+	<target name="make.exe" depends="make.jar,download.launch4j,def.launch4j">
 		<launch4j configFile="l4j/l4jdaconf.xml"/>
-		<delete file="build/Dota2AutoAccepter.jar"/>
+		<delete file="${build.dir}/Dota2AutoAccepter.jar"/>
 	</target>
 
-	<target name="all" description=" Build ..." depends="make.exe">
+	<target name="default" depends="make.exe">
 		<echo> If build fails try to "ant clean" then "ant" </echo>
 	</target>
 
 	<target name="clean" description="Clean up">
-		<delete dir="build"/>
+		<delete dir="${build.dir}"/>
 		<delete dir="${launch4j.dir}"/>
 	</target>
 
