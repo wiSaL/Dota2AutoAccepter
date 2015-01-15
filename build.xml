@@ -1,0 +1,81 @@
+<project name="Dota2AutoAccepter" default="all">
+
+	<property name="launch4j.dir" location="launch4j"/>
+
+	<target name="init">
+		<condition property="isl4jex">
+			<resourceexists>
+  				<file file="${launch4j.dir}/launch4j.jar"/>
+			</resourceexists>
+		</condition>
+	</target>
+
+	<target name="download.launch4j" description="dwnloading"
+		 depends="init" unless="isl4jex">
+		<get src="http://kent.dl.sourceforge.net/project/launch4j/launch4j-3/3.6/launch4j-3.6-win32.zip"
+			 dest="launch4j.zip"/>
+		<unzip src="launch4j.zip" dest=""/>
+		<delete file="launch4j.zip"/>
+		<taskdef name="launch4j" 
+			 classname="net.sf.launch4j.ant.Launch4jTask" 
+			 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+	</target>
+
+	<target name="def.launch4j" description="def"
+		 depends="init" if="isl4jex">
+		<taskdef name="launch4j" 
+			 classname="net.sf.launch4j.ant.Launch4jTask" 
+			 classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+	</target>
+
+	<target name="make.dirs" description="Make build directory">
+		<mkdir dir="build"/>
+		<mkdir dir="build/class"/>
+	</target>
+
+	<path id="classpath" >
+		<fileset dir="libs">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="compile" description="Compiling" depends="make.dirs">
+		<javac destdir="build/class" classpathref="classpath" includeantruntime="false">
+			<src path="src"/>
+		</javac>
+	</target>
+
+	<target name="make.jar" description="make jar" depends="compile">
+		<jar destfile="build/Dota2AutoAccepter.jar">
+			<fileset dir="build/class">
+					<include name="**/*.class"/>
+					<exclude name="**/CVS"/>
+			</fileset>
+			<fileset dir="src">
+				<include name="img/*.png"/>
+			</fileset>
+			<zipgroupfileset dir="libs" includes="*.jar"/>
+			<manifest>
+				<attribute name="Class-Path" value="."/>
+      			<attribute name="Main-Class" value="me.vtz.autoaccepter.DotaAutoAccepter"/>
+    	</manifest>
+		</jar>
+		<delete dir="build/class"/>
+	</target>
+
+	<target name="make.exe" description="make exe"
+		 depends="make.jar,download.launch4j,def.launch4j">
+		<launch4j configFile="l4j/l4jdaconf.xml"/>
+		<delete file="build/Dota2AutoAccepter.jar"/>
+	</target>
+
+	<target name="all" description=" Build ..." depends="make.exe">
+		<echo> If build fails try to "ant clean" then "ant" </echo>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<delete dir="build"/>
+		<delete dir="${launch4j.dir}"/>
+	</target>
+
+</project>
