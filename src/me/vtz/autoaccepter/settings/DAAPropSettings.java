@@ -46,7 +46,7 @@ public class DAAPropSettings implements DAASettings{
 	
 	private int windowXPos, windowYPos;
 	private String hotKeyStr, hotKey;
-	private boolean isSettingsDefault, clickOnlyInDota, inTrayOnStart;
+	private boolean isSettingsDefault, clickOnlyInDota, inTrayOnStart, playSoundOnSS;
 	private int interval;
 	private double clickXPos, clickYPos;
 //	private DotaAutoAccepter dAA;
@@ -74,6 +74,7 @@ public class DAAPropSettings implements DAASettings{
             isSettingsDefault = Boolean.parseBoolean(props.getProperty("isSettingsDefault", "true"));
             clickOnlyInDota = Boolean.parseBoolean(props.getProperty("clickOnlyInDota", "true"));
             inTrayOnStart = Boolean.parseBoolean(props.getProperty("inTrayOnStart", "false"));
+            playSoundOnSS = Boolean.parseBoolean(props.getProperty("playSoundOnSS", "true"));
             interval = Integer.parseInt(props.getProperty("interval", "5"));
             if (interval < 1) interval = 1;
             if (interval > 20) interval = 20;
@@ -101,6 +102,8 @@ public class DAAPropSettings implements DAASettings{
 		props.setProperty("isSettingsDefault", Boolean.toString(isSettingsDefault));
 		inTrayOnStart = false;
 		props.setProperty("inTrayOnStart", Boolean.toString(inTrayOnStart));
+		playSoundOnSS = true;
+		props.setProperty("playSoundOnSS", Boolean.toString(playSoundOnSS));
 		setDefaultSettings();
 
 	}
@@ -176,7 +179,6 @@ public class DAAPropSettings implements DAASettings{
 	public void setHotKey(String hotKey) {
 		this.hotKey = hotKey;
 		props.setProperty("hotKey", hotKey);
-		System.out.println("hotKey changed " + hotKey);
 	}
 	
 	public String getHotKey() {
@@ -205,7 +207,6 @@ public class DAAPropSettings implements DAASettings{
 		if (interval > 0 && interval <= 20) {
 			this.interval = interval;
 			props.setProperty("interval", Integer.toString(interval));
-			System.out.println("Interval changed" + interval);
 		}
 	}
 	
@@ -242,5 +243,14 @@ public class DAAPropSettings implements DAASettings{
 	
 	public boolean getInTrayOnStart() {
 		return inTrayOnStart;
+	}
+	
+	public boolean getSoundOnSS() {
+		return playSoundOnSS;
+	}
+	
+	public void playSoundOnSS(boolean sound) {
+		playSoundOnSS = sound;
+		props.setProperty("playSoundOnSS", Boolean.toString(playSoundOnSS));
 	}
 }

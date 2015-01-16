@@ -93,12 +93,14 @@ public class DAARobotClicker implements DAAClicker {
 		timer = new Timer();
 		timer.schedule(new clickTask(), 2 * 1000,
 				dAA.settings.getInterval() * 1000);
+		dAA.gui.setStatusRunning(true);
 	}
 
 	public void stopClick() {
 		timer.cancel();
 		timer.purge();
 		timer = null;
+		dAA.gui.setStatusRunning(false);
 	}
 
 	public boolean isStarted() {

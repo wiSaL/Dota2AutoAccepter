@@ -21,6 +21,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.io.IOException;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -47,7 +53,7 @@ public class DAAFrame extends JFrame implements DAAGui {
 	 */
 	private static final long serialVersionUID = 2057196683737605548L;
 	
-	public static final String VERSION = "v0.2 Alpha";
+	public static final String VERSION = "v0.3 Alpha";
 	public static final String APP_NAME = "Dota 2 AutoAccepter";
 	
 	TrayIcon trayIcon;
@@ -56,22 +62,25 @@ public class DAAFrame extends JFrame implements DAAGui {
 	private DotaAutoAccepter dAA;
 
 	private JTextField hotKeyField;
-	private JCheckBox defaultsBox, onlyInDotaBox;
+	private JCheckBox defaultsBox, onlyInDotaBox, playSoundBox;
 	private JPanel settingsPanel;
 	private JLabel ssLabel, intervalLabel, coordLabel, authorLabel;
 	private JSpinner intervalSpinner;
 	private Font defaultFont, authorFont;
 	private DAAPercentField pXField, pYField;
+	private Image iconImage, iconImageRunning;
 	
-
 	public DAAFrame(DotaAutoAccepter dotaAutoAccepter) {
 		super(APP_NAME + " " + VERSION);
 		dAA = dotaAutoAccepter;
 		setVisible(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setResizable(false);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource("/img/trayIcon.png")));
+		iconImage = Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/res/trayIcon.png"));
+		iconImageRunning = Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/res/trayIcon_running.png"));
+		setIconImage(iconImage);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -106,9 +115,7 @@ public class DAAFrame extends JFrame implements DAAGui {
 				}
 			});
 			popup.add(openItem);
-			Image image = Toolkit.getDefaultToolkit().getImage(
-					getClass().getResource("/img/trayIcon.png"));
-			trayIcon = new TrayIcon(image, APP_NAME, popup);
+			trayIcon = new TrayIcon(iconImage, APP_NAME, popup);
 			trayIcon.setImageAutoSize(true);
 			trayIcon.addActionListener(new ActionListener() {
 				@Override
@@ -121,6 +128,7 @@ public class DAAFrame extends JFrame implements DAAGui {
 		} else {
 			System.out.println("system tray not supported");
 		}
+		
 		addWindowStateListener(new WindowStateListener() {
 			public void windowStateChanged(WindowEvent e) {
 //				System.out.println("qweqwe : " + e.getNewState());
@@ -154,7 +162,8 @@ public class DAAFrame extends JFrame implements DAAGui {
 		// GUI elements bounds
 		Rectangle ssLabelRect = new Rectangle(10, 10, 150, 20);
 		Rectangle hotKeyFieldRect = new Rectangle(150, 10, 150, 20);
-		Rectangle defaultsBoxRect = new Rectangle(10, 40, 160, 20);
+		Rectangle defaultsBoxRect = new Rectangle(10, 40, 130, 20);
+		Rectangle playSoundBoxRect = new Rectangle(150, 40 , 100, 20);/////
 		Rectangle settingsPanelRect = new Rectangle(10, 70, 290, 110);
 		Rectangle onlyDotaBoxRect = new Rectangle(10, 20, 200, 20);
 		Rectangle intervalLabelRect = new Rectangle(10, 50, 140, 20);
@@ -183,13 +192,22 @@ public class DAAFrame extends JFrame implements DAAGui {
 		hotKeyField.setCaretColor(Color.WHITE);
 		add(hotKeyField);
 
-		defaultsBox = new JCheckBox("Default settings ");
+		defaultsBox = new JCheckBox("Default settings");
 		defaultsBox.setFont(defaultFont);
 		defaultsBox.setHorizontalAlignment(JCheckBox.LEFT);
 		defaultsBox.setSelected(dAA.settings.isSettingsDefault());
 		defaultsBox.setMnemonic(KeyEvent.VK_D);
 		defaultsBox.setBounds(defaultsBoxRect);
 		add(defaultsBox);
+		
+		playSoundBox = new JCheckBox("Play sound");
+		playSoundBox.setFont(defaultFont);
+		playSoundBox.setHorizontalAlignment(JCheckBox.LEFT);
+		playSoundBox.setSelected(dAA.settings.getSoundOnSS());
+		playSoundBox.setMnemonic(KeyEvent.VK_S);
+		playSoundBox.setBounds(playSoundBoxRect);
+		add(playSoundBox);
+		
 
 		settingsPanel = new JPanel();
 		Border titled = BorderFactory.createTitledBorder("Settings");
@@ -334,6 +352,13 @@ public class DAAFrame extends JFrame implements DAAGui {
 			}
 
 		});
+		
+		playSoundBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dAA.settings.playSoundOnSS(playSoundBox.isSelected());
+			}
+		});
 
 		onlyInDotaBox.addActionListener(new ActionListener() {
 			@Override
@@ -376,6 +401,34 @@ public class DAAFrame extends JFrame implements DAAGui {
 
 	public void waitedKeyPressed() {
 		hotKeyField.setFocusable(false);
+	}
+	
+	public void setStatusRunning (boolean running) {
+		if (running) {
+			setIconImage(iconImageRunning);
+			trayIcon.setImage(iconImageRunning);
+		} else {
+			setIconImage(iconImage);
+			trayIcon.setImage(iconImage);
+		}
+		if (dAA.settings.getSoundOnSS()) playSound();
+	}
+	
+	private void playSound() {
+		try {
+		    
+		    AudioInputStream ais = AudioSystem.getAudioInputStream(getClass()
+		    		.getResourceAsStream("/res/startstop.wav"));
+		    
+		    Clip clip = AudioSystem.getClip();
+		    clip.open(ais);
+		    
+		    clip.setFramePosition(0);
+		    clip.start();
+
+		} catch(IOException | UnsupportedAudioFileException | LineUnavailableException exc) {
+		    exc.printStackTrace();
+		}
 	}
 
 	private void setSettingsPanelEnabled(boolean b) {

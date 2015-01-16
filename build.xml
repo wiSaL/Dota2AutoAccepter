@@ -51,7 +51,8 @@
 					<exclude name="**/CVS"/>
 			</fileset>
 			<fileset dir="src">
-				<include name="img/*.png"/>
+				<include name="res/*.png"/>
+				<include name="res/*.wav"/>
 			</fileset>
 			<zipgroupfileset dir="libs" includes="*.jar"/>
 			<manifest>

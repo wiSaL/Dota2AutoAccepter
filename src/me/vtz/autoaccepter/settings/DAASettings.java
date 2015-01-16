@@ -43,4 +43,8 @@ public interface DAASettings {
 	public void setInTrayOnStart(boolean inTray);
 	
 	public boolean getInTrayOnStart(); 
+	
+	public boolean getSoundOnSS();
+	
+	public void playSoundOnSS(boolean sound);
 }
