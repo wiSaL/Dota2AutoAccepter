@@ -22,6 +22,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -33,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.DefaultEditor;
@@ -418,7 +420,7 @@ public class DAAFrame extends JFrame implements DAAGui {
 		try {
 		    
 		    AudioInputStream ais = AudioSystem.getAudioInputStream(getClass()
-		    		.getResourceAsStream("/res/startstop.wav"));
+		    		.getResource("/res/startstop.wav"));
 		    
 		    Clip clip = AudioSystem.getClip();
 		    clip.open(ais);
@@ -428,6 +430,8 @@ public class DAAFrame extends JFrame implements DAAGui {
 
 		} catch(IOException | UnsupportedAudioFileException | LineUnavailableException exc) {
 		    exc.printStackTrace();
+		    JOptionPane.showMessageDialog(this, getClass()
+		    		.getResource("/res/startstop.wav").toString(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
