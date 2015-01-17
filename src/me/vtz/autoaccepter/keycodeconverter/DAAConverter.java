@@ -32,7 +32,7 @@ public class DAAConverter implements DAAKeyCodeConverter {
 //		dAA = dotaAutoAccepter;
 	}
 	
-	public static String getKeyType(int key) {
+	public String getKeyText(int key) {
 		
 //		System.out.println((char)User32.INSTANCE.MapVirtualKey(key, 2));
 		byte[] keystate = new byte[256];
