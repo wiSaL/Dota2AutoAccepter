@@ -29,6 +29,7 @@ public class DAAKeyboardListener implements DAAKeyListener {
 				} 
 				String hk = java.awt.event.KeyEvent.getKeyText(event
 						.getVirtualKeyCode());
+				//dAA.converter.getKeyText();
 				if (hotKeyStr.isEmpty())
 					hotKeyStr = hk;
 				else

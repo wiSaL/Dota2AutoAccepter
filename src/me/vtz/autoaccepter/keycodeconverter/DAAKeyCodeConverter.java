@@ -2,6 +2,6 @@ package me.vtz.autoaccepter.keycodeconverter;
 
 public interface DAAKeyCodeConverter {
 
-//	String getKeyType(int virtualKeyCode);
+	String getKeyText (int virtualKeyCode);
 
 }
