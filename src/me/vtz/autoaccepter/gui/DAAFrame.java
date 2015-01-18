@@ -22,7 +22,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -45,7 +44,6 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
-
 import me.vtz.autoaccepter.DotaAutoAccepter;
 
 public class DAAFrame extends JFrame implements DAAGui {
@@ -334,7 +332,6 @@ public class DAAFrame extends JFrame implements DAAGui {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				hotKeyField.setForeground(Color.WHITE);
-
 			}
 		});
 
