@@ -72,6 +72,8 @@ public class DAAConverter implements DAAKeyCodeConverter {
 			return "-";
 		case 187:
 			return "=";
+		case 13:
+			return "Enter";
 		default:
 			return java.awt.event.KeyEvent.getKeyText(key);
 		}
